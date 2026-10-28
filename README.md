@@ -38,16 +38,16 @@ resetting progress. Answers are compared case-insensitively.
 ## 5. Acceptance Criteria (완료 기준)
 
 ### Requirement 1: Answering a Flashcard Correctly (Normal Case)
-* **Starting State:** The vocabulary word "학교" (school) is in the "Needs Review" queue[cite: 24].
-* **User Action:** The user sees "학교" and types the correct translation, "school"[cite: 24].
-* **Expected Result:** The program updates the status of "학교" to "Mastered," removes it from the immediate review queue, and displays the next word[cite: 24, 25].
+* **Starting State:** The vocabulary word "학교" (school) is in the "Needs Review" queue.
+* **User Action:** The user sees "학교" and types the correct translation, "school".
+* **Expected Result:** The program updates the status of "학교" to "Mastered," removes it from the immediate review queue, and displays the next word.
 
 ### Requirement 2: Answering a Flashcard Incorrectly (Failure / Edge Case)
-* **Starting State:** The vocabulary word "사과" (apple) is displayed[cite: 24].
-* **User Action:** The user types an incorrect answer (e.g., "banana") or leaves the input blank[cite: 24, 25].
-* **Expected Result:** The program marks "사과" as "High Priority," displays the correct answer to the user, and keeps it in the active review rotation[cite: 24, 25].
+* **Starting State:** The vocabulary word "사과" (apple) is displayed.
+* **User Action:** The user types an incorrect answer (e.g., "banana") or leaves the input blank.
+* **Expected Result:** The program marks "사과" as "High Priority," displays the correct answer to the user, and keeps it in the active review rotation.
 
 ### Requirement 3: Saving and Restoring Data (Normal Case)
-* **Starting State:** The user has correctly answered 5 words during the current session, changing their status to "Mastered"[cite: 24].
-* **User Action:** The user selects "Exit Program" from the main menu[cite: 24].
-* **Expected Result:** The program writes the newly updated statuses to the local data file before closing. Upon the next execution, those 5 words remain marked as "Mastered" and do not appear in the immediate review queue[cite: 24, 25].
+* **Starting State:** The user has correctly answered 5 words during the current session, changing their status to "Mastered".
+* **User Action:** The user selects "Exit Program" from the main menu.
+* **Expected Result:** The program writes the newly updated statuses to the local data file before closing. Upon the next execution, those 5 words remain marked as "Mastered" and do not appear in the immediate review queue.
