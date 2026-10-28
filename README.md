@@ -18,3 +18,36 @@
 ## 3. Items to Confirm (Questions)
 * How many consecutive correct answers are required to permanently mark a word as "mastered"?[cite: 12]
 * Should the initial flashcard deck be loaded from a `.txt` or `.csv` file?[cite: 12]
+
+## 4. Running the Java application
+
+The implementation uses a CSV deck in `data/flashcards.csv` and stores statistics in
+`data/progress.csv`. If the deck does not exist, the application creates a small starter
+deck automatically.
+
+```bash
+javac -d out src/main/java/flashcards/Main.java
+java -cp out flashcards.Main
+```
+
+The default behavior requires three consecutive correct answers to mark a card as
+mastered. The menu supports weakest-first review, progress viewing, adding cards, and
+resetting progress. Answers are compared case-insensitively.
+
+
+## 5. Acceptance Criteria (완료 기준)
+
+### Requirement 1: Answering a Flashcard Correctly (Normal Case)
+* **Starting State:** The vocabulary word "학교" (school) is in the "Needs Review" queue[cite: 24].
+* **User Action:** The user sees "학교" and types the correct translation, "school"[cite: 24].
+* **Expected Result:** The program updates the status of "학교" to "Mastered," removes it from the immediate review queue, and displays the next word[cite: 24, 25].
+
+### Requirement 2: Answering a Flashcard Incorrectly (Failure / Edge Case)
+* **Starting State:** The vocabulary word "사과" (apple) is displayed[cite: 24].
+* **User Action:** The user types an incorrect answer (e.g., "banana") or leaves the input blank[cite: 24, 25].
+* **Expected Result:** The program marks "사과" as "High Priority," displays the correct answer to the user, and keeps it in the active review rotation[cite: 24, 25].
+
+### Requirement 3: Saving and Restoring Data (Normal Case)
+* **Starting State:** The user has correctly answered 5 words during the current session, changing their status to "Mastered"[cite: 24].
+* **User Action:** The user selects "Exit Program" from the main menu[cite: 24].
+* **Expected Result:** The program writes the newly updated statuses to the local data file before closing. Upon the next execution, those 5 words remain marked as "Mastered" and do not appear in the immediate review queue[cite: 24, 25].
