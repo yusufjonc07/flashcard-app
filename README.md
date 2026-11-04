@@ -25,9 +25,12 @@ The implementation uses a CSV deck in `data/flashcards.csv` and stores statistic
 `data/progress.csv`. If the deck does not exist, the application creates a small starter
 deck automatically.
 
+The OCR runtime also requires Tess4J, JNA, Lept4J, and SLF4J jars in `lib/`, plus
+English and Korean Tesseract data files in `tessdata/`.
+
 ```bash
-javac -d out src/main/java/flashcards/Main.java
-java -cp out flashcards.Main
+javac -cp 'lib/*' -d out src/main/java/flashcards/*.java
+java -cp 'out:lib/*' flashcards.Main
 ```
 
 The default behavior requires three consecutive correct answers to mark a card as

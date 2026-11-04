@@ -1,15 +1,23 @@
 package flashcards;
 
-public class Main {
-    static final String GREEN = "\u001B[32m";
-    static final String RED = "\u001B[31m";
-    static final String CYAN = "\u001B[36m";
-    static final String RESET = "\u001B[0m";
+import net.sourceforge.tess4j.Tesseract;
+import java.io.File;
 
-    public static void main(String[] args) {
-        System.out.println(CYAN + "=== Korean Vocabulary Trainer ===" + RESET);
-        System.out.println(GREEN + "1. Start studying" + RESET);
-        System.out.println(GREEN + "2. Import CSV" + RESET);
-        System.out.println(RED + "3. Exit" + RESET);
+public class Main {
+
+    public static void main(String[] args) throws Exception {
+
+        Tesseract tesseract = new Tesseract();
+
+        tesseract.setDatapath("tessdata");
+        tesseract.setLanguage("kor+eng");
+
+        String result = tesseract.doOCR(
+            new File("/Users/yusufaxmad/Documents/screenshots/lecture.png")
+        );
+
+        KoreanWordExtractor extractor = new KoreanWordExtractor(result);
+
+        System.out.println(extractor.extract());
     }
 }
