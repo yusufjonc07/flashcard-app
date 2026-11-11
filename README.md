@@ -21,21 +21,65 @@
 
 ## 4. Running the Java application
 
-The implementation uses a CSV deck in `data/flashcards.csv` and stores statistics in
-`data/progress.csv`. If the deck does not exist, the application creates a small starter
-deck automatically.
+The application stores flashcards and review progress in `data/flashcards.db`, using the
+system `sqlite3` command. Ensure SQLite is installed and available on `PATH`.
 
-The OCR runtime also requires Tess4J, JNA, Lept4J, and SLF4J jars in `lib/`, plus
-English and Korean Tesseract data files in `tessdata/`.
+The batch translation behavior mirrors the client-side workflow used by
+`translate.i18next.com`: all unique page words are translated concurrently through
+its browser workflow. The app uses Playwright's Java library only; no Node.js or
+JavaScript project is required. Playwright downloads/launches a Chromium browser
+the first time it is used. No API key is required.
+The target language defaults to English and can be changed before starting:
 
 ```bash
-javac -cp 'lib/*' -d out src/main/java/flashcards/*.java
-java -cp 'out:lib/*' flashcards.Main
+export GOOGLE_TRANSLATE_TARGET_LANGUAGE="en"
 ```
 
-The default behavior requires three consecutive correct answers to mark a card as
-mastered. The menu supports weakest-first review, progress viewing, adding cards, and
-resetting progress. Answers are compared case-insensitively.
+The OCR runtime also requires Tess4J, JNA, Lept4J, and SLF4J jars in `lib/`, plus
+English and Korean Tesseract data files in `tessdata/`. PowerPoint extraction also
+requires `SparseBitSet-1.3.jar`, which is included in `lib/`.
+
+The application is a JavaFX desktop app. JavaFX 25 modules for macOS Apple Silicon
+are included in `lib/`. On macOS/Linux, run:
+
+```bash
+rm -rf out
+mkdir out
+javac -cp 'lib/*' -d out src/main/java/flashcards/*.java
+java \
+  --module-path 'lib/javafx-base-25.0.1-mac-aarch64.jar:lib/javafx-graphics-25.0.1-mac-aarch64.jar:lib/javafx-controls-25.0.1-mac-aarch64.jar:lib/javafx-swing-25.0.1-mac-aarch64.jar' \
+  --add-modules javafx.controls,javafx.swing \
+  --enable-native-access=javafx.graphics \
+  --enable-native-access=ALL-UNNAMED \
+  -cp 'out:lib/*' \
+  flashcards.Main
+```
+
+The first launch may download the Playwright Chromium browser. Keep an internet
+connection available for this setup and for translation.
+
+The home page shows every document-specific flashcard set with saved-word and
+mastery counts. From there, open a document in the reader or start its learning
+session. The reader, learning page, and document-set home page are separate UI
+screens.
+
+Choose **Open PDF, PPT, or Image** to create or open a document-specific flashcard
+set. The reader shows the current page in the center and its extracted vocabulary
+in the right sidebar. Click a word to translate and reveal its definition; revealing
+it automatically saves that word to the current document's flashcard set. Each
+document has its own vocabulary group in SQLite, even when the same word appears in
+multiple documents.
+
+The menu supports:
+
+* weakest-first review, with three consecutive correct answers required for mastery;
+* manual word entry with Google translation;
+* importing `.csv` files containing `front,back`, `.txt`, `.pdf`, `.ppt`, `.pptx`,
+  `.png`, `.jpg`, `.jpeg`, `.tif`, and `.tiff` files;
+* progress summaries.
+
+Answers are compared case-insensitively. Database failures and translation failures
+are displayed instead of silently creating incomplete cards.
 
 
 ## 5. Acceptance Criteria (완료 기준)
