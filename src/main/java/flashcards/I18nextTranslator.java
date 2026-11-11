@@ -30,6 +30,9 @@ public final class I18nextTranslator implements AutoCloseable {
         page.navigate(SITE);
         requests = playwright.request().newContext(new com.microsoft.playwright.APIRequest.NewContextOptions()
                 .setUserAgent("Mozilla/5.0")
+                .setExtraHTTPHeaders(Map.of(
+                        "Accept", "application/json, text/plain, */*",
+                        "Referer", SITE))
                 .setTimeout(15_000));
     }
 
@@ -40,9 +43,9 @@ public final class I18nextTranslator implements AutoCloseable {
         Map<String, String> translations = new LinkedHashMap<>();
         for (String word : words.stream().distinct().toList()) {
             IOException lastFailure = null;
-            for (int attempt = 1; attempt <= 3; attempt++) {
+            for (int attempt = 1; attempt <= 5; attempt++) {
                 try {
-                    String url = "https://translate.google.com/translate_a/single"
+                    String url = "https://translate.googleapis.com/translate_a/single"
                             + "?client=gtx&sl=auto&tl=" + encode(targetLanguage)
                             + "&dt=t&q=" + encode(word);
                     var response = requests.get(url);
@@ -63,9 +66,9 @@ public final class I18nextTranslator implements AutoCloseable {
                 } catch (RuntimeException | IOException exception) {
                     lastFailure = exception instanceof IOException io
                             ? io : new IOException(exception.getMessage(), exception);
-                    if (attempt < 3) {
+                    if (attempt < 5) {
                         try {
-                            Thread.sleep(750L * attempt);
+                            Thread.sleep(2000L * attempt);
                         } catch (InterruptedException interrupted) {
                             Thread.currentThread().interrupt();
                             throw new IOException("Translation interrupted", interrupted);
@@ -75,7 +78,8 @@ public final class I18nextTranslator implements AutoCloseable {
             }
             if (lastFailure != null) {
                 throw new IOException("Could not translate \"" + word
-                        + "\" through translate.i18next.com after 3 attempts", lastFailure);
+                        + "\" through translate.i18next.com after 5 attempts. "
+                        + "The public translation service may be rate-limiting requests.", lastFailure);
             }
         }
         return translations;
