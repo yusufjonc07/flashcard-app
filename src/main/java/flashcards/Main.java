@@ -1,23 +1,28 @@
 package flashcards;
 
-import net.sourceforge.tess4j.Tesseract;
-import java.io.File;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        Tesseract tesseract = new Tesseract();
+        String textContent;
 
-        tesseract.setDatapath("tessdata");
-        tesseract.setLanguage("kor+eng");
+        OCRExtractor txtImgExt = new OCRExtractor("/Users/yusufaxmad/Downloads/kowordcloud.jpeg");
+        
+        try{
+            textContent = txtImgExt.extract();
+        }catch(Exception e){
+            throw e;
+        }
 
-        String result = tesseract.doOCR(
-            new File("/Users/yusufaxmad/Documents/screenshots/lecture.png")
+        KoreanWordExtractor extractor = new KoreanWordExtractor(textContent);
+        
+
+        System.out.println(
+            extractor
+                .extract()
+                .clean()
+                .words
         );
-
-        KoreanWordExtractor extractor = new KoreanWordExtractor(result);
-
-        System.out.println(extractor.extract());
     }
 }
