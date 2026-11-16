@@ -1,4 +1,4 @@
-package flashcards;
+package flashcards.service;
 
 import org.openkoreantext.processor.OpenKoreanTextProcessorJava;
 import org.openkoreantext.processor.KoreanTokenJava;

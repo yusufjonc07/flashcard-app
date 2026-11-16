@@ -1,4 +1,4 @@
-# Development Document: Console Flashcard & Mastery Tracker
+# Desktop Vocabulary Flashcard Application
 
 ## 1. Project Overview
 * **Project Name:** Console Flashcard & Mastery Tracker[cite: 12]
@@ -45,7 +45,7 @@ are included in `lib/`. On macOS/Linux, run:
 ```bash
 rm -rf out
 mkdir out
-javac -cp 'lib/*' -d out src/main/java/flashcards/*.java
+javac -cp 'lib/*' -d out $(find src/main/java -name '*.java')
 java \
   --module-path 'lib/javafx-base-25.0.1-mac-aarch64.jar:lib/javafx-graphics-25.0.1-mac-aarch64.jar:lib/javafx-controls-25.0.1-mac-aarch64.jar:lib/javafx-swing-25.0.1-mac-aarch64.jar' \
   --add-modules javafx.controls,javafx.swing \
@@ -69,6 +69,14 @@ in the right sidebar. Click a word to translate and reveal its definition; revea
 it automatically saves that word to the current document's flashcard set. Each
 document has its own vocabulary group in SQLite, even when the same word appears in
 multiple documents.
+
+The MVC structure separates responsibilities as follows:
+
+* `flashcards.model` contains SQLite persistence and domain objects;
+* `flashcards.service` contains document readers, extractors, and translation;
+* `flashcards.controller.AppController` coordinates application operations;
+* `flashcards.view.MainView` contains the JavaFX screens;
+* `flashcards.Main` is the thin application launcher.
 
 The menu supports:
 

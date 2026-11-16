@@ -1,4 +1,4 @@
-package flashcards;
+package flashcards.service;
 
 import java.io.File;
 import java.awt.Color;
@@ -19,9 +19,12 @@ import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 
+import flashcards.model.WordPosition;
+
 public final class DocumentReader {
 
-    public record Page(int number, String text, List<String> words, BufferedImage image) {
+    public record Page(int number, String text, List<String> words,
+                       List<WordPosition> positions, BufferedImage image) {
     }
 
     private DocumentReader() {
@@ -43,10 +46,16 @@ public final class DocumentReader {
         try (PDDocument document = Loader.loadPDF(file)) {
             PDFTextStripper stripper = new PDFTextStripper();
             PDFRenderer renderer = new PDFRenderer(document);
+            List<WordPosition> positions = new PDFExtractor().extract(file);
             for (int i = 1; i <= document.getNumberOfPages(); i++) {
+                int currentPage = i;
                 stripper.setStartPage(i);
                 stripper.setEndPage(i);
-                pages.add(page(i, stripper.getText(document), renderer.renderImageWithDPI(i - 1, 120)));
+                List<WordPosition> pagePositions = positions.stream()
+                        .filter(position -> position.getPageNumber() == currentPage)
+                        .toList();
+                pages.add(page(i, stripper.getText(document), pagePositions,
+                        renderer.renderImageWithDPI(i - 1, 120)));
             }
         }
         return pages;
@@ -73,7 +82,7 @@ public final class DocumentReader {
                 graphics.scale(2, 2);
                 slide.draw(graphics);
                 graphics.dispose();
-                pages.add(page(page++, text.toString(), image));
+                pages.add(page(page++, text.toString(), List.of(), image));
             }
         }
         return pages;
@@ -84,15 +93,17 @@ public final class DocumentReader {
     }
 
     private static List<Page> page(String text) {
-        return List.of(page(1, text));
+        return List.of(page(1, text, List.of(), null));
     }
 
     private static Page page(int number, String text) {
-        return page(number, text, null);
+        return page(number, text, List.of(), null);
     }
 
-    private static Page page(int number, String text, BufferedImage image) {
-        return new Page(number, text, new KoreanWordExtractor(text).extract().clean().getWords(), image);
+    private static Page page(int number, String text, List<WordPosition> positions,
+                             BufferedImage image) {
+        return new Page(number, text, new KoreanWordExtractor(text).extract().clean().getWords(),
+                positions, image);
     }
 
     private static String extension(Path path) {

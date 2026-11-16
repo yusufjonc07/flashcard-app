@@ -1,0 +1,26 @@
+November 23, 2026
+
+Submit these three items:
+1. Development documentation (개발 문서)
+2. Presentation slides (발표자료)
+3. Source code (코드)
+Email: b9b13@gachon.ac.kr
+3. What you need to do now
+Based on this lecture, your current priorities are:
+- [ ] Complete the minimum working functionality.
+- [ ] Connect all Java classes and methods.
+- [ ] Implement at least the important additional features.
+- [ ] Integrate additional features into the existing program.
+- [ ] Test the complete workflow.
+- [ ] Record implemented features and problems.
+- [ ] Prepare the program, required data, and execution instructions.
+4. What happens next week?
+On November 18 (Week 12), the professor will focus on:
+- Peer review: reviewing other students' projects.
+- Improving your implementation.
+- Preparing development documentation.
+- Preparing presentation slides.
+Individual presentation: 10 minutes for program demonstration and explanation of design/development, followed by 2 minutes for Q&A and transition.
+
+Main message of this lecture: The professor does not expect you merely to write separate Java methods. You need to make the components work together as one complete application,
+test it, and document the implementation.

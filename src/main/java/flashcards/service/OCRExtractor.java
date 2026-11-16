@@ -1,4 +1,6 @@
-package flashcards;
+package flashcards.service;
+
+import flashcards.service.TextExtractor;
 
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
