@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.1.1'
+}
+
+group = 'flashcards'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+
+    // Web pages (Spring MVC + Thymeleaf) and database access (JdbcTemplate + SQLite)
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.xerial:sqlite-jdbc:3.53.4.0'
+
+    // Document reading, OCR, Korean tokenising, JSON
+    implementation 'org.apache.pdfbox:pdfbox:3.0.8'
+    implementation 'org.apache.poi:poi-ooxml:5.4.1'
+    implementation 'org.apache.poi:poi-scratchpad:5.4.1'
+    implementation 'net.sourceforge.tess4j:tess4j:5.20.0'
+    implementation 'org.openkoreantext:open-korean-text:2.3.1'
+    implementation 'com.google.code.gson:gson:2.14.0'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'failed'
+        exceptionFormat 'full'
+    }
+}
+
+// Run from the project folder so data/ and tessdata/ resolve.
+tasks.named('bootRun') {
+    workingDir = projectDir
+}
