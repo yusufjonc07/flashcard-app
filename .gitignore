@@ -28,3 +28,4 @@ out/
 out-test/
 .DS_Store
 .gradle/
+build/

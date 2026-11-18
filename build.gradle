@@ -43,6 +43,7 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    jvmArgs '--enable-native-access=ALL-UNNAMED'   // sqlite-jdbc loads a native library
     testLogging {
         events 'passed', 'failed'
         exceptionFormat 'full'
@@ -52,4 +53,5 @@ tasks.named('test') {
 // Run from the project folder so data/ and tessdata/ resolve.
 tasks.named('bootRun') {
     workingDir = projectDir
+    jvmArgs '--enable-native-access=ALL-UNNAMED'
 }
