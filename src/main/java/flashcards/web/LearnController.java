@@ -90,13 +90,26 @@ public class LearnController {
         return redirect(id);
     }
 
+    /**
+     * "Know" / "Don't know" buttons: grades the current card, flipped or not, and moves
+     * straight on to the next card.
+     */
     @PostMapping("/grade")
     public String grade(@PathVariable long id, @RequestParam boolean knew, HttpSession http) throws Exception {
         LearningState state = state(id, http);
-        if (state.revealed && state.lastResult == null && !state.session.isFinished()) {
-            state.lastResult = state.session.grade(knew);
+        if (state.lastResult == null && !state.session.isFinished()) {
+            state.session.grade(knew);
             state.revealed = false;
         }
+        return redirect(id);
+    }
+
+    /** Pencil button: fixes the current card's meaning in the database and in the session. */
+    @PostMapping("/edit")
+    public String edit(@PathVariable long id, @RequestParam long cardId, @RequestParam String meaning,
+                       HttpSession http) {
+        LearningState state = state(id, http);
+        state.session.replaceCurrent(flashcards.editMeaning(id, cardId, meaning));
         return redirect(id);
     }
 
@@ -116,10 +129,11 @@ public class LearnController {
         return redirect(id);
     }
 
-    /** Starts a fresh session with the current weakest-first queue. */
+    /** Starts a fresh session: weakest first, or in random order with shuffle=true. */
     @PostMapping("/restart")
-    public String restart(@PathVariable long id, HttpSession http) {
-        states(http).remove(id);
+    public String restart(@PathVariable long id, @RequestParam(defaultValue = "false") boolean shuffle,
+                          HttpSession http) {
+        states(http).put(id, new LearningState(flashcards.startReview(id, shuffle)));
         return redirect(id);
     }
 

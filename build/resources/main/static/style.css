@@ -1,0 +1,77 @@
+/* App-specific styles on top of Bootstrap 5. Layout, buttons, forms and tables come from Bootstrap. */
+
+body {
+    font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+
+/* Card status badges (Card.Status) */
+.status-NEW { background-color: var(--bs-secondary-bg); color: var(--bs-secondary-color); }
+.status-HIGH_PRIORITY { background-color: var(--bs-danger-bg-subtle); color: var(--bs-danger-text-emphasis); }
+.status-LEARNING { background-color: var(--bs-warning-bg-subtle); color: var(--bs-warning-text-emphasis); }
+.status-MASTERED { background-color: var(--bs-success-bg-subtle); color: var(--bs-success-text-emphasis); }
+
+/* Reader: clickable word boxes over the page image */
+.page-view { position: relative; }
+.page-view img { width: 100%; display: block; }
+.page-view .box {
+    position: absolute;
+    background: rgba(var(--bs-primary-rgb), .12);
+    border-bottom: 2px solid var(--bs-primary);
+    cursor: pointer;
+}
+.page-view .box:hover, .page-view .box.active { background: rgba(var(--bs-primary-rgb), .3); }
+/* Words already saved to the set: green instead of blue */
+.page-view .box.saved { background: rgba(var(--bs-success-rgb), .12); border-bottom-color: var(--bs-success); }
+.page-view .box.saved:hover, .page-view .box.saved.active { background: rgba(var(--bs-success-rgb), .3); }
+.page-text { white-space: pre-wrap; }
+.word-list { max-height: 75vh; overflow-y: auto; }
+/* Reader: slide previews at the bottom (max 10, chosen by ReaderController) */
+.slide-strip { bottom: .75rem; z-index: 1030; }
+.slide-thumbs { overflow-x: auto; padding: 2px; }
+.slide-thumb {
+    position: relative; flex: 1 1 0; min-width: 36px; max-width: 120px;
+    height: 64px;
+    display: grid; place-items: center;
+    border: 2px solid var(--bs-border-color); border-radius: .375rem;
+    background: var(--bs-body-bg); overflow: hidden;
+    text-decoration: none; color: var(--bs-secondary-color); font-weight: 600;
+    transition: border-color .15s, transform .15s;
+}
+.slide-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.slide-thumb:hover { border-color: var(--bs-primary); transform: translateY(-2px); }
+.slide-thumb.active { border-color: var(--bs-primary); box-shadow: 0 0 0 2px rgba(var(--bs-primary-rgb), .35); }
+.slide-thumb .slide-num {
+    position: absolute; right: 2px; bottom: 2px;
+    font-size: .7rem; line-height: 1; padding: 2px 4px; border-radius: 4px;
+    background: rgba(0, 0, 0, .6); color: #fff;
+}
+.slide-thumb.active .slide-num { background: var(--bs-primary); }
+.slide-jump { flex: 0 0 44px; }
+/* Large square icon buttons in the strip (prev/next and the page actions) */
+.btn-action {
+    flex: 0 0 auto; width: 56px; height: 56px; padding: 0;
+    display: inline-grid; place-items: center; font-size: 1.5rem; border-radius: .6rem;
+}
+.btn-action .badge { font-size: .7rem; }
+/* Phones: thumbnails get their own scrollable row above the buttons */
+@media (max-width: 767.98px) {
+    .slide-strip .card-body { flex-wrap: wrap; }
+    .slide-thumbs { order: -1; flex: 0 0 100%; overflow-x: auto; }
+    .slide-thumbs .slide-thumb { flex: 0 0 72px; }
+    .slide-thumbs .slide-jump { flex: 0 0 44px; }
+    .btn-action { width: 48px; height: 48px; font-size: 1.3rem; }
+}
+
+/* Word list toggled off: hide it and let the page image take the whole row. */
+.reader-row.words-hidden > .reader-side { display: none; }
+.reader-row.words-hidden > .reader-page { width: 100%; }
+
+/* Desktop: the word list sits on the right and stays in view while the page scrolls. */
+@media (min-width: 768px) {
+    .reader-side { top: 1rem; }
+    /* leave room for the navbar, the list header and the bottom strip */
+    .reader-side .word-list { max-height: calc(100vh - 23rem); }
+}
+.word-list .word { cursor: pointer; }
+.word-list .save.btn-success:disabled { opacity: 1; }   /* "Saved" is a state, not a dimmed button */
+.word-list .meaning.hidden { filter: blur(4px); cursor: pointer; user-select: none; }

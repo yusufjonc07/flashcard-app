@@ -12,6 +12,11 @@ import org.apache.pdfbox.text.TextPosition;
 
 import flashcards.model.WordPosition;
 
+/**
+ * Collects every piece of text on each PDF page with its position. PDFBox hands over the text
+ * split at spaces; for each piece we also keep the left and right edge of every character, so
+ * the reader can highlight single words inside a piece that has no spaces.
+ */
 public class PDFExtractor extends PDFTextStripper {
 
     private final List<WordPosition> words = new ArrayList<>();
@@ -22,79 +27,69 @@ public class PDFExtractor extends PDFTextStripper {
     }
 
     public List<WordPosition> extract(File file) throws IOException {
-
         words.clear();
-
         try (PDDocument document = Loader.loadPDF(file)) {
             getText(document);
         }
-
         return new ArrayList<>(words);
     }
 
     @Override
-    protected void writeString(
-            String text,
-            List<TextPosition> positions) {
-
-        StringBuilder currentWord = new StringBuilder();
-
-        float startX = 0;
-        float startY = 0;
-        float endX = 0;
-        float maxHeight = 0;
-
+    protected void writeString(String text, List<TextPosition> positions) {
+        Piece piece = new Piece();
         for (TextPosition position : positions) {
-
-            String character = position.getUnicode();
-
-            if (character == null || character.isBlank()) {
-
-                saveWord(currentWord, startX, startY,
-                        endX, maxHeight);
-
-                currentWord.setLength(0);
+            String characters = position.getUnicode();
+            if (characters == null || characters.isBlank()) {
+                save(piece);
+                piece = new Piece();
                 continue;
             }
-
-            float x = position.getXDirAdj();
-            float y = position.getYDirAdj();
-            float width = position.getWidthDirAdj();
-            float height = position.getHeightDir();
-
-            if (currentWord.isEmpty()) {
-                startX = x;
-                startY = y;
-                maxHeight = height;
-            }
-
-            currentWord.append(character);
-
-            endX = x + width;
-            maxHeight = Math.max(maxHeight, height);
+            piece.add(characters, position);
         }
-
-        saveWord(currentWord, startX, startY,
-                endX, maxHeight);
+        save(piece);
     }
 
-    private void saveWord(
-            StringBuilder word,
-            float x,
-            float y,
-            float endX,
-            float height) {
+    private void save(Piece piece) {
+        if (piece.text.isEmpty()) {
+            return;
+        }
+        int count = piece.lefts.size();
+        float[] lefts = new float[count];
+        float[] rights = new float[count];
+        for (int i = 0; i < count; i++) {
+            lefts[i] = piece.lefts.get(i);
+            rights[i] = piece.rights.get(i);
+        }
+        words.add(new WordPosition(piece.text.toString(), piece.x, piece.y, piece.right - piece.x,
+                piece.height, getCurrentPageNo(), lefts, rights));
+    }
 
-        if (!word.isEmpty()) {
+    /** The text between two spaces, built up one character at a time. */
+    private static final class Piece {
+        final StringBuilder text = new StringBuilder();
+        final List<Float> lefts = new ArrayList<>();
+        final List<Float> rights = new ArrayList<>();
+        float x;
+        float y;
+        float right;
+        float height;
 
-            words.add(new WordPosition(
-                    word.toString(),
-                    x,
-                    y,
-                    endX - x,
-                    height,
-                    getCurrentPageNo()
-            ));
+        void add(String characters, TextPosition position) {
+            float left = position.getXDirAdj();
+            float width = position.getWidthDirAdj();
+            if (text.isEmpty()) {
+                x = left;
+                y = position.getYDirAdj();
+            }
+            text.append(characters);
+            // A glyph can stand for more than one character (ligatures); split its width evenly.
+            int n = characters.length();
+            for (int i = 0; i < n; i++) {
+                lefts.add(left + width * i / n);
+                rights.add(left + width * (i + 1) / n);
+            }
+            right = left + width;
+            height = Math.max(height, position.getHeightDir());
         }
     }
 }

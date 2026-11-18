@@ -1,0 +1,7 @@
+# Extra nouns for the Korean tokenizer (one per line).
+# Add words from your lecture materials that are split wrongly, e.g. 메소드 → 메 + 소드.
+메소드
+메서드
+인스턴스
+컴파일러
+리팩터링

@@ -102,8 +102,7 @@ public final class DocumentReader {
 
     private static Page page(int number, String text, List<WordPosition> positions,
                              BufferedImage image) {
-        return new Page(number, text, new KoreanWordExtractor(text).extract().clean().getWords(),
-                positions, image);
+        return new Page(number, text, KoreanWordExtractor.words(text), positions, image);
     }
 
     private static String extension(Path path) {

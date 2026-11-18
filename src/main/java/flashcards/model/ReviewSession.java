@@ -94,6 +94,16 @@ public final class ReviewSession {
         return true;
     }
 
+    /** Replaces the current card after its meaning was edited; progress is unchanged. */
+    public void replaceCurrent(Card edited) {
+        Card card = requireCurrent();
+        if (card.id() != edited.id()) {
+            throw new IllegalArgumentException("Only the current card can be edited");
+        }
+        queue.removeFirst();
+        queue.addFirst(edited);
+    }
+
     public boolean canUndo() {
         return undo != null;
     }

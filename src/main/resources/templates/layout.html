@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Shared fragments used by every page. Bootstrap 5 is served from /webjars (see build.gradle). -->
+
+<th:block th:fragment="assets">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/style.css}">
+</th:block>
+
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · Flashcards'">Flashcards</title>
+    <th:block th:replace="~{layout :: assets}"></th:block>
+</head>
+<body>
+
+<!-- Pages that use the full width wrap this in <th:block th:with="fluid=true">. -->
+<nav th:fragment="header" class="navbar navbar-expand bg-body border-bottom mb-4">
+    <div th:class="${fluid != null and fluid} ? 'container-fluid px-md-4' : 'container'">
+        <a class="navbar-brand fw-semibold" th:href="@{/}"><i class="bi bi-stack text-primary"></i> Flashcards</a>
+        <ol class="breadcrumb mb-0 me-auto text-truncate" th:if="${set != null}">
+            <li class="breadcrumb-item"><a class="link-secondary link-underline-opacity-0" th:href="@{/}">Home</a></li>
+            <li class="breadcrumb-item text-truncate">
+                <a class="link-body-emphasis link-underline-opacity-0" th:href="@{/sets/{id}(id=${set.id()})}" th:text="${set.name()}">set</a>
+            </li>
+        </ol>
+    </div>
+</nav>
+
+<div th:fragment="flash">
+    <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${message != null}">
+        <i class="bi bi-check-circle me-1"></i> <span th:text="${message}">message</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error != null}">
+        <i class="bi bi-exclamation-triangle me-1"></i> <span th:text="${error}">error</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+
+<th:block th:fragment="scripts">
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+</th:block>
+
+</body>
+</html>

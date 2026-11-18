@@ -133,6 +133,19 @@ public class FlashcardService {
         return repository.addCard(setId, word, translation);
     }
 
+    /** Changes the meaning of a card in this set and returns the updated card. */
+    public Card editMeaning(long setId, long cardId, String meaning) {
+        if (repository.card(cardId).documentId() != setId) {
+            throw new IllegalArgumentException("That word belongs to another set");
+        }
+        String back = meaning == null ? "" : meaning.trim();
+        if (back.isEmpty()) {
+            throw new IllegalArgumentException("The meaning cannot be empty");
+        }
+        repository.updateTranslation(cardId, back);
+        return repository.card(cardId);
+    }
+
     public void deleteCard(long setId, long cardId) {
         if (repository.card(cardId).documentId() != setId) {
             throw new IllegalArgumentException("That word belongs to another set");
@@ -183,8 +196,17 @@ public class FlashcardService {
 
     /** Starts a session with the set's unmastered cards, weakest first (R6, R9). */
     public ReviewSession startReview(long setId) {
+        return startReview(setId, false);
+    }
+
+    /** Same as {@link #startReview(long)}, optionally in random order. */
+    public ReviewSession startReview(long setId, boolean shuffle) {
         repository.document(setId);
-        return new ReviewSession(repository.reviewCards(setId), repository::saveProgress);
+        List<Card> cards = new ArrayList<>(repository.reviewCards(setId));
+        if (shuffle) {
+            java.util.Collections.shuffle(cards);
+        }
+        return new ReviewSession(cards, repository::saveProgress);
     }
 
     // ---- Translation ---------------------------------------------------------------------

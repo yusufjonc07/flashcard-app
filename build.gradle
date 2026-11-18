@@ -25,6 +25,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.xerial:sqlite-jdbc:3.53.4.0'
 
+    // Bootstrap 5 and its icons, served by the app itself from /webjars/** (works offline)
+    implementation 'org.webjars:bootstrap:5.3.3'
+    implementation 'org.webjars.npm:bootstrap-icons:1.11.3'
+
     // Document reading, OCR, Korean tokenising, JSON
     implementation 'org.apache.pdfbox:pdfbox:3.0.8'
     implementation 'org.apache.poi:poi-ooxml:5.4.1'

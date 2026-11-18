@@ -157,6 +157,11 @@ public class FlashcardRepository {
                 card.correct(), card.incorrect(), card.streak(), card.mastered() ? 1 : 0, card.id());
     }
 
+    /** Changes a card's meaning; its progress is kept. */
+    public void updateTranslation(long id, String translation) {
+        jdbc.update("UPDATE cards SET translation = ? WHERE id = ?", translation, id);
+    }
+
     public void deleteCard(long id) {
         jdbc.update("DELETE FROM cards WHERE id = ?", id);
     }
