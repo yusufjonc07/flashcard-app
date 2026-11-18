@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e7eefc"/>
+    </linearGradient>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)"/>
+  <rect x="300" y="350" width="500" height="360" rx="60" fill="#9ec5fe"/>
+  <rect x="224" y="290" width="500" height="360" rx="60" fill="#0d6efd"/>
+  <text x="474" y="555" font-size="230" font-family="Apple SD Gothic Neo, sans-serif" font-weight="700" fill="#fff" text-anchor="middle">가</text>
+</svg>

@@ -103,6 +103,18 @@ The second change was also checked in the running app. In `korean-fairy-tales-10
 `./run.sh` and `./build.sh` do the same as `bootRun` and `bootJar`. Run from the project
 folder: `data/` (database and uploads) and `tessdata/` are relative paths.
 
+**Desktop app (macOS).** The same app can be packaged as a normal Mac application with its
+own Java runtime, so no JDK is needed to run it. It opens in its own window instead of a browser:
+
+```bash
+./gradlew desktopApp   # build/desktop/Flashcards.app  (double-click to start)
+./gradlew desktopDmg   # build/desktop/Flashcards-1.0.0.dmg  (installer: drag to Applications)
+```
+
+The desktop app keeps its database and uploads in `~/Library/Application Support/Flashcards/`.
+The OCR language data is bundled inside the app. Translation still needs internet access, and
+OCR of images still needs `brew install tesseract`. Closing the window stops the app.
+
 To translate into a language other than English:
 
 ```bash

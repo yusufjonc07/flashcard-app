@@ -12,6 +12,13 @@ java {
     }
 }
 
+// JavaFX ships a separate jar per operating system and CPU.
+def osName = System.getProperty('os.name').toLowerCase()
+def arm = System.getProperty('os.arch') in ['aarch64', 'arm64']
+ext.javafxPlatform = osName.contains('mac') ? (arm ? 'mac-aarch64' : 'mac')
+        : osName.contains('win') ? 'win'
+        : (arm ? 'linux-aarch64' : 'linux')
+
 repositories {
     mavenCentral()
 }
@@ -37,6 +44,11 @@ dependencies {
     implementation 'org.openkoreantext:open-korean-text:2.3.1'
     implementation 'com.google.code.gson:gson:2.14.0'
 
+    // Desktop window (JavaFX WebView) for the packaged app, see desktop/DesktopApp.java
+    ['base', 'graphics', 'controls', 'media', 'web'].each {
+        implementation "org.openjfx:javafx-${it}:25.0.1:${javafxPlatform}"
+    }
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
@@ -55,3 +67,57 @@ tasks.named('bootRun') {
     workingDir = projectDir
     jvmArgs '--enable-native-access=ALL-UNNAMED'
 }
+
+// ---- Desktop app -------------------------------------------------------------------------
+// ./gradlew desktopApp   -> build/desktop/Flashcards.app (macOS) with its own Java runtime
+// ./gradlew desktopDmg   -> build/desktop/Flashcards-1.0.0.dmg installer
+
+def desktopInput = layout.buildDirectory.dir('desktop/input')
+def desktopOut = layout.buildDirectory.dir('desktop')
+
+tasks.register('desktopInput', Sync) {
+    description = 'Collects the app jar, its libraries and the OCR data for jpackage.'
+    from(tasks.named('jar'))
+    from(configurations.runtimeClasspath)
+    into desktopInput
+    into('tessdata') { from 'tessdata' }
+}
+
+def jpackageTask = { String name, String type ->
+    tasks.register(name, Exec) {
+        group = 'distribution'
+        description = "Packages the desktop app (${type}) with jpackage."
+        dependsOn 'desktopInput'
+        def launcher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
+        doFirst {
+            def out = desktopOut.get().asFile
+            // jpackage refuses to overwrite, so remove the previous output of this type
+            if (type == 'app-image') {
+                new File(out, 'Flashcards.app').deleteDir()
+            } else {
+                fileTree(out) { include "*.${type}" }.each { it.delete() }
+            }
+            def jpackage = new File(launcher.get().metadata.installationPath.asFile, 'bin/jpackage')
+            def jarName = tasks.named('jar').get().archiveFileName.get()
+            def cmd = [jpackage.path,
+                       '--type', type,
+                       '--name', 'Flashcards',
+                       '--app-version', project.version.toString(),
+                       '--vendor', 'Gachon University student project',
+                       '--input', desktopInput.get().asFile.path,
+                       '--main-jar', jarName,
+                       '--main-class', 'flashcards.desktop.DesktopMain',
+                       '--dest', out.path,
+                       '--java-options', '--enable-native-access=ALL-UNNAMED',
+                       '--java-options', '-Dflashcards.tessdata=$APPDIR/tessdata',
+                       '--java-options', '-Xmx2g']
+            def icon = file('packaging/Flashcards.icns')
+            if (osName.contains('mac') && icon.exists()) {
+                cmd += ['--icon', icon.path, '--mac-package-name', 'Flashcards']
+            }
+            commandLine cmd
+        }
+    }
+}
+jpackageTask('desktopApp', 'app-image')
+jpackageTask('desktopDmg', osName.contains('mac') ? 'dmg' : (osName.contains('win') ? 'msi' : 'deb'))

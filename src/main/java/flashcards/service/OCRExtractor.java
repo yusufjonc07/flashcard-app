@@ -1,6 +1,6 @@
 package flashcards.service;
 
-import flashcards.service.TextExtractor;
+import flashcards.AppPaths;
 
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -17,7 +17,7 @@ public class OCRExtractor implements TextExtractor {
     public String extract() throws Exception {
         Tesseract tesseract = new Tesseract();
 
-        tesseract.setDatapath("tessdata");
+        tesseract.setDatapath(AppPaths.tessdata().toString());
         tesseract.setLanguage("kor+eng");
 
         try {

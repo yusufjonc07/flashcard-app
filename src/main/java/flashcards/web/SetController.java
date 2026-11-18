@@ -1,5 +1,6 @@
 package flashcards.web;
 
+import flashcards.AppPaths;
 import flashcards.model.DocumentSet;
 import flashcards.service.DocumentCache;
 import flashcards.service.FlashcardService;
@@ -24,7 +25,7 @@ import java.util.Set;
 @Controller
 public class SetController {
 
-    private static final Path UPLOADS = Path.of("data", "uploads");
+    private static final Path UPLOADS = AppPaths.data().resolve("uploads");
     private static final Set<String> DOCUMENT_TYPES =
             Set.of("pdf", "ppt", "pptx", "png", "jpg", "jpeg", "tif", "tiff");
     private static final Set<String> WORD_LIST_TYPES = Set.of("csv", "txt");
