@@ -5,7 +5,9 @@
 <th:block th:fragment="assets">
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
     <link rel="stylesheet" th:href="@{/style.css}">
+    <script th:src="@{/background.js}"></script>
 </th:block>
 
 <head th:fragment="head(title)">
@@ -39,6 +41,27 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 </div>
+
+<!-- Background picker (bottom panel). floating=true adds a round button in the bottom-left corner;
+     pages with their own bottom bar pass false and open it with data-bs-target="#bgPicker". -->
+<th:block th:fragment="background(floating)">
+    <button class="btn btn-light border shadow rounded-circle bg-fab" type="button" th:if="${floating}"
+            data-bs-toggle="offcanvas" data-bs-target="#bgPicker" title="Background" aria-label="Choose background">
+        <i class="bi bi-image"></i>
+    </button>
+    <div class="offcanvas offcanvas-bottom bg-picker" tabindex="-1" id="bgPicker" aria-labelledby="bgPickerTitle">
+        <div class="offcanvas-header pb-2">
+            <h2 class="offcanvas-title h5" id="bgPickerTitle"><i class="bi bi-image me-1"></i> Background</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body pt-0">
+            <div class="d-flex gap-3 overflow-x-auto pb-2" id="bgGrid"></div>
+            <div class="small text-danger d-none" id="bgError"></div>
+            <div class="small text-body-secondary">Images you add are kept in this browser only; nothing is uploaded.</div>
+            <input type="file" id="bgFile" accept="image/*" multiple hidden>
+        </div>
+    </div>
+</th:block>
 
 <th:block th:fragment="scripts">
     <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>

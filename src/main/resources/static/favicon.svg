@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect x="5" y="9" width="22" height="16" rx="3" fill="#9ec5fe"/>
+  <rect x="3" y="6" width="22" height="16" rx="3" fill="#0d6efd"/>
+  <text x="14" y="18.5" font-size="10" font-family="sans-serif" font-weight="700" fill="#fff" text-anchor="middle">가</text>
+</svg>

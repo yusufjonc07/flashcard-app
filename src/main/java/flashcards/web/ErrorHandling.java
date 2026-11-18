@@ -7,6 +7,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -70,6 +71,11 @@ public final class ErrorHandling {
         }
         if (exception instanceof java.io.IOException) {
             return HttpStatus.BAD_GATEWAY;   // file or translation service problem
+        }
+        if (exception instanceof ErrorResponse response) {
+            // Spring's own web errors carry their status: missing file 404, wrong method 405, bad parameter 400, ...
+            HttpStatus status = HttpStatus.resolve(response.getStatusCode().value());
+            return status == null ? HttpStatus.INTERNAL_SERVER_ERROR : status;
         }
         return HttpStatus.INTERNAL_SERVER_ERROR;
     }

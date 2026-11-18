@@ -75,3 +75,39 @@ body {
 .word-list .word { cursor: pointer; }
 .word-list .save.btn-success:disabled { opacity: 1; }   /* "Saved" is a state, not a dimmed button */
 .word-list .meaning.hidden { filter: blur(4px); cursor: pointer; user-select: none; }
+
+/* ---- Background picker (background.js) ---- */
+html[data-bg] body {
+    background: var(--app-bg) center / cover no-repeat fixed;
+}
+/* Page titles that sit directly on the background get a solid label so they stay readable. */
+html[data-bg] main > h1,
+html[data-bg] main > .d-flex > h1 {
+    background: var(--bs-body-bg); padding: .2rem .8rem; border-radius: .5rem; display: inline-block;
+}
+.bg-fab {
+    position: fixed; left: 1rem; bottom: 1rem; z-index: 1030;
+    width: 52px; height: 52px; padding: 0; display: grid; place-items: center; font-size: 1.35rem;
+}
+.bg-picker { --bs-offcanvas-height: auto; }
+.bg-tile {
+    position: relative; flex: 0 0 auto; width: 150px; height: 96px; padding: 0;
+    border: 3px solid var(--bs-border-color); border-radius: .6rem;
+    background: var(--bs-tertiary-bg) center / cover no-repeat;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .25rem;
+    color: var(--bs-secondary-color); font-size: 1.5rem;
+}
+.bg-tile:hover { border-color: var(--bs-primary-border-subtle); }
+.bg-tile.active { border-color: var(--bs-primary); box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .3); }
+.bg-tile-name {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 2px 6px;
+    font-size: .75rem; color: #fff; background: rgba(0, 0, 0, .45); text-align: left;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-radius: 0 0 .4rem .4rem;
+}
+.bg-tile-none .bg-tile-name, .bg-tile-add .bg-tile-name { position: static; background: none; color: inherit; text-align: center; }
+.bg-tile-add { border-style: dashed; }
+.bg-tile-remove {
+    position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%;
+    display: grid; place-items: center; font-size: .75rem; color: #fff; background: rgba(0, 0, 0, .6);
+}
+.bg-tile-remove:hover { background: var(--bs-danger); }

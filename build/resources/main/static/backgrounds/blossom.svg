@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff5f8"/><stop offset="1" stop-color="#ffe0ea"/></linearGradient>
+    <g id="p"><ellipse rx="14" ry="22" fill="#f7a8c2"/><ellipse rx="14" ry="22" fill="#f7a8c2" transform="rotate(72)"/><ellipse rx="14" ry="22" fill="#f7a8c2" transform="rotate(144)"/><ellipse rx="14" ry="22" fill="#f7a8c2" transform="rotate(216)"/><ellipse rx="14" ry="22" fill="#f7a8c2" transform="rotate(288)"/><circle r="6" fill="#e0607e"/></g>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <path d="M-40 120 C 200 160 360 90 560 170 S 820 260 900 220" stroke="#6b4a3f" stroke-width="14" fill="none" stroke-linecap="round"/>
+  <path d="M300 140 C 340 220 300 280 360 330" stroke="#6b4a3f" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <g opacity=".95">
+    <use href="#p" x="120" y="130"/><use href="#p" x="230" y="170" transform="rotate(20 230 170)"/><use href="#p" x="380" y="120"/>
+    <use href="#p" x="350" y="320"/><use href="#p" x="520" y="160" transform="rotate(40 520 160)"/><use href="#p" x="660" y="210"/>
+    <use href="#p" x="800" y="230" transform="rotate(10 800 230)"/>
+  </g>
+  <g opacity=".55">
+    <use href="#p" x="1100" y="300" transform="scale(.7) rotate(30 1100 300)"/><use href="#p" x="1350" y="520" transform="rotate(60 1350 520) scale(.6)"/>
+    <use href="#p" x="980" y="640" transform="scale(.8)"/><use href="#p" x="1480" y="760" transform="scale(.6)"/><use href="#p" x="620" y="780" transform="scale(.7)"/>
+  </g>
+</svg>

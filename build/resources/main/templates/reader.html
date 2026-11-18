@@ -114,6 +114,9 @@
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill text-bg-primary"
                           th:text="${wordCount}">0</span>
                 </button>
+                <button class="btn btn-outline-secondary btn-action" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#bgPicker" title="Background" aria-label="Choose background">
+                    <i class="bi bi-image"></i></button>
                 <a class="btn btn-outline-secondary btn-action" th:href="@{/sets/{id}(id=${set.id()})}"
                    title="Words in this set" aria-label="Words in this set"><i class="bi bi-list-ul"></i></a>
                 <a class="btn btn-primary btn-action" th:href="@{/sets/{id}/learn(id=${set.id()})}"
@@ -123,6 +126,7 @@
     </nav>
 </main>
 
+<th:block th:replace="~{layout :: background(false)}"></th:block>
 <th:block th:replace="~{layout :: scripts}"></th:block>
 <script th:inline="javascript">
     const setId = /*[[${set.id()}]]*/ 0;
@@ -252,7 +256,7 @@
 
     // Keyboard: ↑/↓ move through the words, ←/→ change page, Enter saves the selected word, W toggles the list.
     document.addEventListener('keydown', event => {
-        if (event.target.closest('input, textarea, select') || event.metaKey || event.ctrlKey || event.altKey) return;
+        if (event.target.closest('input, textarea, select, .offcanvas') || event.metaKey || event.ctrlKey || event.altKey) return;
         const current = items.findIndex(li => li.classList.contains('active-word'));
         switch (event.key) {
             case 'ArrowDown':

@@ -187,6 +187,8 @@
               onsubmit="return confirm('Shuffle and start a new session?')">
             <button class="btn btn-dark btn-circle" type="submit" title="Shuffle and restart"><i class="bi bi-shuffle"></i></button>
         </form>
+        <button class="btn btn-dark btn-circle" type="button" data-bs-toggle="offcanvas" data-bs-target="#bgPicker"
+                title="Background" aria-label="Choose background"><i class="bi bi-image"></i></button>
         <button class="btn btn-dark btn-circle" type="button" id="fullBtn" title="Fullscreen (F)">
             <i class="bi bi-arrows-fullscreen"></i></button>
     </div>
@@ -218,6 +220,7 @@
     </div>
 </div>
 
+<th:block th:replace="~{layout :: background(false)}"></th:block>
 <th:block th:replace="~{layout :: scripts}"></th:block>
 <script th:inline="javascript">
     const word = /*[[${card != null ? card.front() : ''}]]*/ '';
@@ -285,7 +288,7 @@
     setTyping(typingSaved);
 
     document.addEventListener('keydown', event => {
-        if (event.target.closest('input, .modal') || event.metaKey || event.ctrlKey || event.altKey) return;
+        if (event.target.closest('input, .modal, .offcanvas') || event.metaKey || event.ctrlKey || event.altKey) return;
         switch (event.key) {
             case ' ': event.preventDefault(); flip(); break;
             case 'ArrowLeft': click('noBtn'); break;
