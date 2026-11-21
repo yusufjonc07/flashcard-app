@@ -131,6 +131,35 @@ public class FlashcardRepository {
     }
 
     /**
+     * Translations fetched earlier for these words in this language, whether or not the words
+     * were saved as cards. Lets the reader show a page again without asking the service.
+     */
+    public Map<String, String> cachedTranslations(Collection<String> words, String language) {
+        Map<String, String> result = new HashMap<>();
+        if (words.isEmpty()) {
+            return result;
+        }
+        named.query("SELECT word, translation FROM translations WHERE language = :language AND word IN (:words)",
+                new MapSqlParameterSource("words", words).addValue("language", language),
+                row -> {
+                    result.put(row.getString("word"), row.getString("translation"));
+                });
+        return result;
+    }
+
+    /** Remembers translations from the service so the same word is never sent twice. */
+    public void cacheTranslations(Map<String, String> translations, String language) {
+        if (translations.isEmpty()) {
+            return;
+        }
+        List<Object[]> rows = translations.entrySet().stream()
+                .map(entry -> new Object[] {entry.getKey(), language, entry.getValue()})
+                .toList();
+        transactions.executeWithoutResult(status -> jdbc.batchUpdate(
+                "INSERT OR REPLACE INTO translations(word, language, translation) VALUES (?, ?, ?)", rows));
+    }
+
+    /**
      * Cards that still need review, weakest first: most wrong answers, then shortest
      * streak, then oldest.
      */
@@ -226,5 +255,14 @@ public class FlashcardRepository {
             });
         }
         jdbc.execute("CREATE INDEX IF NOT EXISTS cards_document_idx ON cards(document_id)");
+        // Every translation the service returned, so a page is never translated twice.
+        jdbc.execute("""
+                CREATE TABLE IF NOT EXISTS translations (
+                    word TEXT NOT NULL,
+                    language TEXT NOT NULL,
+                    translation TEXT NOT NULL,
+                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (word, language)
+                )""");
     }
 }

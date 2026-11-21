@@ -4,7 +4,7 @@ package flashcards.model;
  * One flashcard and its learning progress.
  *
  * <p>The mastery rule lives only here: {@link #answered(boolean)} returns the card's next
- * state, and {@link SQLiteStore#saveProgress(Card)} just persists it. Keeping the rule in one
+ * state, and {@code FlashcardRepository.saveProgress(Card)} just persists it. Keeping the rule in one
  * place means the review session, undo, and the database can never disagree about it.
  */
 public record Card(long id, long documentId, String front, String translation,

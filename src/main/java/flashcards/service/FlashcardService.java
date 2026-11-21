@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -212,25 +213,39 @@ public class FlashcardService {
     // ---- Translation ---------------------------------------------------------------------
 
     /**
-     * Translates words, reusing meanings already saved in the database so repeated words do
-     * not use up the free translation quota. Words that could not be translated are left out.
+     * Translates words, sending each word to the translation service only once.
+     *
+     * <p>A meaning saved on a card (possibly edited by the user) is used first, then a
+     * translation fetched earlier (kept in the database per language), and only the remaining
+     * words are sent to the service. New results are saved, so opening the same page again,
+     * even after a restart, makes no requests. Words that could not be translated are left out
+     * and tried again next time.
      */
     public Map<String, String> translateAll(List<String> words) throws Exception {
-        Map<String, String> known = repository.knownTranslations(words);
+        String language = translator.targetLanguage();
+        Map<String, String> known = new HashMap<>(repository.cachedTranslations(words, language));
+        known.putAll(repository.knownTranslations(words));
         List<String> missing = new ArrayList<>();
         for (String word : words) {
             if (!known.containsKey(word) && !missing.contains(word)) {
                 missing.add(word);
             }
         }
-        List<String> translated = missing.isEmpty() ? List.of() : translator.translateAll(missing);
+        if (!missing.isEmpty()) {
+            List<String> translated = translator.translateAll(missing);
+            Map<String, String> fresh = new LinkedHashMap<>();
+            for (int i = 0; i < missing.size() && i < translated.size(); i++) {
+                String meaning = translated.get(i);
+                if (meaning != null && !meaning.isBlank()) {
+                    fresh.put(missing.get(i), meaning);
+                }
+            }
+            repository.cacheTranslations(fresh, language);
+            known.putAll(fresh);
+        }
         Map<String, String> result = new LinkedHashMap<>();
         for (String word : words) {
             String meaning = known.get(word);
-            if (meaning == null) {
-                int index = missing.indexOf(word);
-                meaning = index < translated.size() ? translated.get(index) : null;
-            }
             if (meaning != null && !meaning.isBlank()) {
                 result.put(word, meaning);
             }

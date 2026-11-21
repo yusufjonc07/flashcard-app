@@ -280,6 +280,16 @@ class AcceptanceTest {
         assertEquals("apple", result.get("사과"));
         assertEquals(1, translator.requests, "only the new word is sent to the translator");
         assertEquals("library", service.addWord(set, "도서관", ""), "blank meaning is translated");
+
+        // The same page again: every meaning comes from the database, nothing is sent.
+        List<String> page = List.of("사과", "시험", "학교", "모르는말");
+        service.translateAll(page);
+        int afterFirstView = translator.requests;
+        assertEquals(Map.of("사과", "apple", "시험", "exam", "학교", "school (saved)"), service.translateAll(page));
+        assertEquals(afterFirstView + 1, translator.requests, "only the untranslatable word is tried again");
+        open(folder.resolve("test.db"));   // restart
+        service.translateAll(List.of("사과", "시험"));
+        assertEquals(0, translator.requests, "still nothing sent after a restart");
     }
 
     @Test

@@ -72,7 +72,7 @@ Each one is checked automatically by `./gradlew test` (see §8).
 
 | Reviewer | Feedback | What was changed |
 |----------|----------|------------------|
-| KIM YEONHO | Typing the definition of every word by hand is slow; add automatic translation. | Meanings are now translated automatically. The reader translates every word on the page as soon as it opens. On the Words page, leaving the meaning blank translates the word. CSV/TXT lines without a meaning are translated on import. Meanings already saved in any set are reused instead of being translated again. The user can still type a meaning, or fix it with **Edit meaning** while learning. |
+| KIM YEONHO | Typing the definition of every word by hand is slow; add automatic translation. | Meanings are now translated automatically. The reader translates every word on the page as soon as it opens. On the Words page, leaving the meaning blank translates the word. CSV/TXT lines without a meaning are translated on import. Meanings already saved in any set are reused instead of being translated again, and every translation the service returns is kept in the database, so a page is never translated twice (not even after a restart). The user can still type a meaning, or fix it with **Edit meaning** while learning. |
 | KIM TAESONG | When moving to the next slides, show which words were already saved automatically. | The reader checks the set's saved words on every page. Words saved on earlier slides show a green **Saved** button and a highlighted box on the page, and the word list header shows "n saved". The database also refuses the same word twice in one set, so a word can never be saved twice. |
 
 Before the first change, a word's meaning had to be typed in by the user (W09 requirement
@@ -131,6 +131,7 @@ press **Learn** on the new set.
   * one upload form for documents (PDF, PPT, PPTX, PNG, JPG, TIFF) and word lists (CSV, TXT);
   * **New set** creates an empty set for typing words in.
 * **Reader:**
+  * Each word is translated once; opening a page again uses the saved translations.
   * Shows the page image. Portrait pages are shown two side by side.
   * Clickable boxes on Korean words (PDF) show the meaning on hover.
   * The word list with meanings and **Save** buttons can be toggled with **W**.
@@ -171,7 +172,7 @@ press **Learn** on the new set.
   * CSV/TXT import;
   * one word per set;
   * Korean text round-trip;
-  * automatic translation and reuse;
+  * automatic translation and reuse (a page is translated only once);
   * manual sets.
 * `WebFlowTest` (4 tests): the whole Spring application driven through HTTP:
   * the home page;

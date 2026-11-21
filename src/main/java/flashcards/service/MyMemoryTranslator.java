@@ -43,6 +43,11 @@ public class MyMemoryTranslator implements Translator {
         this.targetLanguage = targetLanguage == null || targetLanguage.isBlank() ? "en" : targetLanguage.trim();
     }
 
+    @Override
+    public String targetLanguage() {
+        return targetLanguage;
+    }
+
     public String translate(String text) throws IOException, InterruptedException {
         IOException lastFailure = null;
         for (int attempt = 1; attempt <= ATTEMPTS; attempt++) {
